@@ -1,4 +1,4 @@
-name: Backend CI/CD Pipeline
+name: Backend CI/CD Pipeline (Production Grade)
 
 on:
   push:
@@ -14,10 +14,10 @@ concurrency:
 env:
   DOCKER_IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/senin-backend-imajin
   AZURE_WEBAPP_NAME: 'senin-azure-backend-app-adin'
-  AZURE_RESOURCE_GROUP: 'senin-resource-group-adin' # az CLI komutları için Resource Group gerekli
+  AZURE_RESOURCE_GROUP: 'senin-resource-group-adin'
 
 jobs:
-  # 1. AŞAMA: KOD KALİTESİ (Senin VM'inde çalışır)
+  # 1. AŞAMA: KOD KALİTESİ VE GÜVENLİK
   sonarqube-analysis:
     runs-on: self-hosted
     steps:
@@ -30,17 +30,26 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: 'http://localhost:9000'
+          # VM içinde de olsa, esneklik için secret kullanmak daha profesyoneldir
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           projectBaseDir: backend
 
-  # 2. AŞAMA: DOCKER BUILD & PUSH (Senin VM'inde çalışır)
+      # KRİTİK EKLENTİ: Quality Gate. Kod standartların altındaysa pipeline burada patlar, bozuk kod deploy edilmez.
+      - name: SonarQube Quality Gate Check
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # 2. AŞAMA: DOCKER BUILD & PUSH
   build-and-push-docker:
     needs: sonarqube-analysis
     runs-on: self-hosted
     steps:
+      # İYİLEŞTİRME: rm -rf yerine Git'in kendi güvenli temizlik aracını kullanıyoruz.
       - name: Clean Workspace Before Checkout
-        run: sudo rm -rf ${{ github.workspace }}/*
+        run: git clean -fdx || true
 
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -54,6 +63,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # İYİLEŞTİRME: 'cache-from' ve 'cache-to' ile build sürelerini ciddi oranda kısaltıyoruz.
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
@@ -62,25 +72,34 @@ jobs:
           tags: |
             ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
             ${{ env.DOCKER_IMAGE_NAME }}:latest
+          cache-from: type=registry,ref=${{ env.DOCKER_IMAGE_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_IMAGE_NAME }}:buildcache,mode=max
 
       - name: Prune Docker System
         run: docker system prune -af
 
-  # 3. AŞAMA: AZURE DEPLOYMENT (Service Principal ile)
+  # 3. AŞAMA: AZURE DEPLOYMENT
   deploy-to-azure:
     needs: build-and-push-docker
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     steps:
-      # 1. Adım: Service Principal ile Azure'a Giriş Yap
       - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # 2. Adım: Yeni İmajı Web App'e Bildir ve Yeniden Başlat
-      - name: Deploy Container to Azure Web App
+      # KRİTİK EKLENTİ: Private Registry Auth ve Restart komutları birleştirildi.
+      - name: Deploy and Restart Azure Web App
         run: |
           az webapp config container set \
             --name ${{ env.AZURE_WEBAPP_NAME }} \
             --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-            --docker-custom-image-name ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
+            --docker-custom-image-name ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} \
+            --docker-registry-server-url https://index.docker.io \
+            --docker-registry-server-user ${{ secrets.DOCKERHUB_USERNAME }} \
+            --docker-registry-server-password ${{ secrets.DOCKERHUB_TOKEN }}
+
+          # App Service'in yeni imajı hemen çekmeye zorlanması
+          az webapp restart \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }}
