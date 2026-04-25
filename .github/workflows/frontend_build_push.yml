@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'backend/**'
+      - 'frontend/**'
   workflow_dispatch:
 
 concurrency:
@@ -12,8 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DOCKER_IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/senin-backend-imajin
-  AZURE_WEBAPP_NAME: 'senin-azure-backend-app-adin'
+  DOCKER_IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/BIZIM-REPO-ADMIZ-FRONTEND
+  AZURE_WEBAPP_NAME: 'BIZIM-WEBAPP-ADMIZ'
   AZURE_RESOURCE_GROUP: 'senin-resource-group-adin'
 
 jobs:
@@ -33,7 +33,7 @@ jobs:
           # VM içinde de olsa, esneklik için secret kullanmak daha profesyoneldir
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
-          projectBaseDir: backend
+          projectBaseDir: frontend
 
       # KRİTİK EKLENTİ: Quality Gate. Kod standartların altındaysa pipeline burada patlar, bozuk kod deploy edilmez.
       - name: SonarQube Quality Gate Check
