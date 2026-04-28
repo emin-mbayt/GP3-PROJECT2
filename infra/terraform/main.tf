@@ -57,6 +57,7 @@ module "keyvault" {
   subnet_id              = module.network.snet_kv_id
   private_dns_zone_id_kv = module.network.private_dns_zone_id_kv
   kv_sku                 = var.kv_sku
+  runner_ip              = var.admin_source_cidr
 }
 
 # 4. Data — SQL Server + Private Endpoint, password written to KV
@@ -112,6 +113,11 @@ resource "azurerm_key_vault_secret" "vm_admin_password" {
 }
 
 # 7. App Gateway — WAF v2, routes / → frontend, /api/* → backend
+resource "time_sleep" "wait_for_nsg_propagation" {
+  create_duration = "60s"
+  depends_on      = [module.network]
+}
+
 module "appgw" {
   source = "./modules/appgw"
 
@@ -123,4 +129,6 @@ module "appgw" {
   frontend_private_ip        = module.compute.vm_web_private_ip
   backend_private_ip         = module.compute.vm_api_private_ip
   log_analytics_workspace_id = module.observability.workspace_id
+
+  depends_on = [time_sleep.wait_for_nsg_propagation]
 }

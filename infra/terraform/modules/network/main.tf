@@ -265,10 +265,6 @@ resource "azurerm_network_security_group" "ops" {
 
 # ── NSG → Subnet associations ─────────────────────────────────────────────────
 
-resource "azurerm_subnet_network_security_group_association" "appgw" {
-  subnet_id                 = azurerm_subnet.appgw.id
-  network_security_group_id = azurerm_network_security_group.appgw.id
-}
 
 resource "azurerm_subnet_network_security_group_association" "web" {
   subnet_id                 = azurerm_subnet.web.id

@@ -10,13 +10,13 @@ resource "azurerm_key_vault" "main" {
   rbac_authorization_enabled    = true
   soft_delete_retention_days    = 90
   purge_protection_enabled      = true
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   tags                          = var.tags
 
   network_acls {
     default_action = "Deny"
     bypass         = "AzureServices"
-    # ip_rules and virtual_network_subnet_ids left empty — all access via PE.
+    ip_rules       = [var.runner_ip]
   }
 }
 
@@ -40,11 +40,8 @@ resource "azurerm_private_endpoint" "kv" {
   }
 }
 
-# Uncomment to grant the Terraform runner Secrets Officer access if running
-# from a service principal with a known object ID:
-#
-# resource "azurerm_role_assignment" "tf_secrets_officer" {
-#   scope                = azurerm_key_vault.main.id
-#   role_definition_name = "Key Vault Secrets Officer"
-#   principal_id         = data.azurerm_client_config.current.object_id
-# }
+resource "azurerm_role_assignment" "tf_secrets_officer" {
+  scope                = azurerm_key_vault.main.id
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id         = data.azurerm_client_config.current.object_id
+}

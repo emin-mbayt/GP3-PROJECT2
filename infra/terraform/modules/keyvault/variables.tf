@@ -33,3 +33,8 @@ variable "kv_sku" {
   description = "Key Vault SKU (standard | premium)."
   type        = string
 }
+
+variable "runner_ip" {
+  description = "Public IP of Terraform runner allowed to write KV secrets."
+  type        = string
+}

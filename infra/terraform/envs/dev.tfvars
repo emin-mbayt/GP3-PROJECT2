@@ -4,13 +4,13 @@ location     = "northeurope"
 owner        = "ironhack-team"
 
 # Replace with your actual IP before applying: curl -s ifconfig.me
-admin_source_cidr = "0.0.0.0/0"
+admin_source_cidr = "37.114.183.169"
 
 sql_admin_login = "sqladmin"
 
-vm_size_web = "Standard_B2s"
-vm_size_api = "Standard_B2s"
-vm_size_ops = "Standard_B2s"
+vm_size_web = "Standard_D2s_v3"
+vm_size_api = "Standard_D2s_v3"
+vm_size_ops = "Standard_D2s_v3"
 
 sql_sku = "S0"
 kv_sku  = "standard"
