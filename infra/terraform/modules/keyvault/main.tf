@@ -2,7 +2,7 @@ data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "main" {
   # KV names must be globally unique, 3-24 chars, alphanumeric + hyphens.
-  name                          = "kv-${var.prefix}-${var.suffix}"
+  name                          = "kv-grp3-${var.suffix}"
   location                      = var.location
   resource_group_name           = var.resource_group_name
   tenant_id                     = data.azurerm_client_config.current.tenant_id

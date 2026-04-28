@@ -86,7 +86,7 @@ module "compute" {
   prefix              = local.prefix
   subnet_web_id       = module.network.snet_web_id
   subnet_api_id       = module.network.snet_api_id
-  ssh_public_key      = var.ssh_public_key
+  vm_admin_password   = var.vm_admin_password
   vm_size_web         = var.vm_size_web
   vm_size_api         = var.vm_size_api
 }
@@ -100,8 +100,15 @@ module "ops" {
   tags                = local.tags
   prefix              = local.prefix
   subnet_ops_id       = module.network.snet_ops_id
-  ssh_public_key      = var.ssh_public_key
+  vm_admin_password   = var.vm_admin_password
   vm_size_ops         = var.vm_size_ops
+}
+
+# Store VM admin password in Key Vault
+resource "azurerm_key_vault_secret" "vm_admin_password" {
+  name         = "vm-admin-password"
+  value        = var.vm_admin_password
+  key_vault_id = module.keyvault.key_vault_id
 }
 
 # 7. App Gateway — WAF v2, routes / → frontend, /api/* → backend

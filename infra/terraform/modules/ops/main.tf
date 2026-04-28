@@ -18,15 +18,11 @@ resource "azurerm_linux_virtual_machine" "ops" {
   resource_group_name             = var.resource_group_name
   size                            = var.vm_size_ops
   admin_username                  = "azureuser"
-  disable_password_authentication = true
+  admin_password                  = var.vm_admin_password
+  disable_password_authentication = false
   tags                            = var.tags
 
   network_interface_ids = [azurerm_network_interface.ops.id]
-
-  admin_ssh_key {
-    username   = "azureuser"
-    public_key = var.ssh_public_key
-  }
 
   os_disk {
     caching              = "ReadWrite"

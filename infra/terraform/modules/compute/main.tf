@@ -20,15 +20,11 @@ resource "azurerm_linux_virtual_machine" "web" {
   resource_group_name             = var.resource_group_name
   size                            = var.vm_size_web
   admin_username                  = "azureuser"
-  disable_password_authentication = true
+  admin_password                  = var.vm_admin_password
+  disable_password_authentication = false
   tags                            = var.tags
 
   network_interface_ids = [azurerm_network_interface.web.id]
-
-  admin_ssh_key {
-    username   = "azureuser"
-    public_key = var.ssh_public_key
-  }
 
   os_disk {
     caching              = "ReadWrite"
@@ -69,15 +65,11 @@ resource "azurerm_linux_virtual_machine" "api" {
   resource_group_name             = var.resource_group_name
   size                            = var.vm_size_api
   admin_username                  = "azureuser"
-  disable_password_authentication = true
+  admin_password                  = var.vm_admin_password
+  disable_password_authentication = false
   tags                            = var.tags
 
   network_interface_ids = [azurerm_network_interface.api.id]
-
-  admin_ssh_key {
-    username   = "azureuser"
-    public_key = var.ssh_public_key
-  }
 
   os_disk {
     caching              = "ReadWrite"

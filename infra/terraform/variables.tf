@@ -31,8 +31,8 @@ variable "admin_source_cidr" {
   type        = string
 }
 
-variable "ssh_public_key" {
-  description = "SSH public key material for VM administrator login."
+variable "vm_admin_password" {
+  description = "Password for the azureuser account on all VMs. Pass via TF_VAR_vm_admin_password."
   type        = string
   sensitive   = true
 }

@@ -19,8 +19,8 @@ variable "subnet_ops_id" {
   type        = string
 }
 
-variable "ssh_public_key" {
-  description = "SSH public key material for the azureuser account."
+variable "vm_admin_password" {
+  description = "Password for the azureuser account on all VMs."
   type        = string
   sensitive   = true
 }
