@@ -83,3 +83,9 @@ variable "kv_sku" {
     error_message = "kv_sku must be 'standard' or 'premium'."
   }
 }
+
+variable "alert_email" {
+  description = "Email address for monitoring alert notifications."
+  type        = string
+  default     = "ichihiroy9@gmail.com"
+}

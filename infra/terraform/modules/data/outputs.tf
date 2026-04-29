@@ -8,3 +8,8 @@ output "sql_admin_password" {
   value       = random_password.sql.result
   sensitive   = true
 }
+
+output "sql_db_id" {
+  description = "Azure SQL database resource ID."
+  value       = azurerm_mssql_database.main.id
+}

@@ -17,3 +17,13 @@ output "vm_api_principal_id" {
   description = "System-assigned managed identity principal ID for the backend VM."
   value       = azurerm_linux_virtual_machine.api.identity[0].principal_id
 }
+
+output "vm_web_id" {
+  description = "Frontend VM resource ID."
+  value       = azurerm_linux_virtual_machine.web.id
+}
+
+output "vm_api_id" {
+  description = "Backend VM resource ID."
+  value       = azurerm_linux_virtual_machine.api.id
+}

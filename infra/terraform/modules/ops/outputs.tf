@@ -12,3 +12,8 @@ output "vm_ops_name" {
   description = "Ops VM name (for Ansible inventory generation)."
   value       = azurerm_linux_virtual_machine.ops.name
 }
+
+output "vm_ops_id" {
+  description = "Ops VM resource ID."
+  value       = azurerm_linux_virtual_machine.ops.id
+}
