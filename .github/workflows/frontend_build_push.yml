@@ -1,4 +1,4 @@
-name: FRONTEND PIPELINE - SonarQube, Docker Build & Azure Deploy
+name: FRONTEND PIPELINE - SonarQube, Docker Build
 
 on:
   push:
@@ -13,8 +13,6 @@ concurrency:
 
 env:
   DOCKER_IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/BIZIM-REPO-ADMIZ-FRONTEND
-  AZURE_WEBAPP_NAME: 'BIZIM-WEBAPP-ADMIZ'
-  AZURE_RESOURCE_GROUP: 'senin-resource-group-adin'
 
 jobs:
 
@@ -112,28 +110,4 @@ jobs:
       - name: Prune Docker System
         run: docker system prune -af
 
-  # 3. AŞAMA: AZURE DEPLOYMENT
-  deploy-to-azure:
-    needs: build-and-push-docker
-    runs-on: ubuntu-latest
-    steps:
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      # KRİTİK EKLENTİ: Private Registry Auth ve Restart komutları birleştirildi.
-      - name: Deploy and Restart Azure Web App
-        run: |
-          az webapp config container set \
-            --name ${{ env.AZURE_WEBAPP_NAME }} \
-            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-            --docker-custom-image-name ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} \
-            --docker-registry-server-url https://index.docker.io \
-            --docker-registry-server-user ${{ secrets.DOCKERHUB_USERNAME }} \
-            --docker-registry-server-password ${{ secrets.DOCKERHUB_TOKEN }}
-
-          # App Service'in yeni imajı hemen çekmeye zorlanması
-          az webapp restart \
-            --name ${{ env.AZURE_WEBAPP_NAME }} \
-            --resource-group ${{ env.AZURE_RESOURCE_GROUP }}
+  
