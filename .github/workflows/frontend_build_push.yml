@@ -16,15 +16,50 @@ env:
 
 jobs:
 
-  # 0. AŞAMA: HIZLI HATA YAKALAMA (FAIL-FAST)
-
-  # 2. AŞAMA: DOCKER BUILD & PUSH
-  build-and-push-docker:
-    #needs: [sonarqube-analysis, lint-and-typecheck]
+  sonarqube-analysis:
     runs-on: ubuntu-latest
     environment: env
     steps:
-      # İYİLEŞTİRME: rm -rf yerine Git'in kendi güvenli temizlik aracını kullanıyoruz.
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run Tests with Coverage
+        working-directory: frontend
+        run: npm run test:coverage
+
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          projectBaseDir: frontend
+
+  build-and-push-docker:
+    needs: sonarqube-analysis
+    runs-on: ubuntu-latest
+    environment: env
+    steps:
       - name: Clean Workspace Before Checkout
         run: git clean -fdx || true
 
@@ -40,7 +75,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # İYİLEŞTİRME: 'cache-from' ve 'cache-to' ile build sürelerini ciddi oranda kısaltıyoruz.
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
@@ -51,11 +85,8 @@ jobs:
             ${{ env.DOCKER_IMAGE_NAME }}:latest
           build-args: |
             VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
-
           cache-from: type=registry,ref=${{ env.DOCKER_IMAGE_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.DOCKER_IMAGE_NAME }}:buildcache,mode=max
 
       - name: Prune Docker System
         run: docker system prune -af
-
-  
