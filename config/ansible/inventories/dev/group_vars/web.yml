@@ -1,5 +1,5 @@
 docker_image: "{{ dockerhub_username }}/gp3-front"
 container_name: "burger-web"
-container_port: 80
+container_port: 3000
 app_port: 80
 vite_api_base_url: "http://{{ hostvars['vm-api']['ansible_host'] }}:8080"

@@ -89,3 +89,20 @@ jobs:
 
       - name: Prune Docker System
         run: docker system prune -af
+
+  deploy:
+    needs: build-and-push-docker
+    runs-on: ubuntu-latest
+    environment: env
+    steps:
+      - name: Deploy to vm-web via Ansible
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_OPS_HOST }}
+          username: azureuser
+          password: ${{ secrets.VM_OPS_PASSWORD }}
+          script: |
+            echo "${{ secrets.ANSIBLE_VAULT_PASS }}" > /tmp/vp
+            cd /home/azureuser/config/ansible
+            ansible-playbook playbooks/site.yml --limit web --vault-password-file /tmp/vp
+            rm -f /tmp/vp
