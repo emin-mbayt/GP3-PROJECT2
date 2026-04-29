@@ -21,7 +21,7 @@ jobs:
   # 2. AŞAMA: DOCKER BUILD & PUSH
   build-and-push-docker:
     #needs: [sonarqube-analysis, lint-and-typecheck]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       # İYİLEŞTİRME: rm -rf yerine Git'in kendi güvenli temizlik aracını kullanıyoruz.
       - name: Clean Workspace Before Checkout
