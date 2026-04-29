@@ -25,11 +25,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Compile Backend
+        run: mvn compile -f backend/pom.xml
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          # VM içinde de olsa, esneklik için secret kullanmak daha profesyoneldir
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           projectBaseDir: backend
