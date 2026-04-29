@@ -22,6 +22,7 @@ jobs:
   build-and-push-docker:
     #needs: [sonarqube-analysis, lint-and-typecheck]
     runs-on: ubuntu-latest
+    environment: env
     steps:
       # İYİLEŞTİRME: rm -rf yerine Git'in kendi güvenli temizlik aracını kullanıyoruz.
       - name: Clean Workspace Before Checkout
