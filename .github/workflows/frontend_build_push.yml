@@ -17,6 +17,62 @@ env:
 jobs:
 
   # 0. AŞAMA: HIZLI HATA YAKALAMA (FAIL-FAST)
+    lint-and-typecheck:
+    runs-on: ubuntu-latest
+    environment: env  
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Frontend ortamını (Node.js) ayağa kaldırıyoruz
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Projende kullandığın Node sürümüne göre değiştirebilirsin
+          cache: 'npm' # Bir sonraki çalışmalarda paket yükleme süresini saniyelere indirir
+          cache-dependency-path: './frontend/package-lock.json'
+
+      # Bağımlılıkları kur (Monorepo olduğu için working-directory belirtmek zorundayız)
+      - name: Install Dependencies
+        working-directory: ./frontend
+        run: npm ci # Best Practice: 'npm install' yerine CI ortamlarında her zaman kilitli versiyonları kuran 'npm ci' kullanılır.
+
+      # ESLint ile kod standartlarını kontrol et
+      - name: Run ESLint
+        working-directory: ./frontend
+        run: npm run lint
+
+      # TypeScript tiplerini kontrol et (Kodu derlemeden sadece hata var mı diye bakar)
+      - name: Check TypeScript Types
+        working-directory: ./frontend
+        run: npx tsc --noEmit
+  # 1. AŞAMA: KOD KALİTESİ VE GÜVENLİK
+  sonarqube-analysis:
+    needs: lint-and-typecheck # Önceki aşamada kritik hatalar varsa bu aşamaya geçilmez, böylece kaynaklarımızı boşa harcamayız
+    runs-on: ubuntu-latest
+    environment: env
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN2 }}
+          # VM içinde de olsa, esneklik için secret kullanmak daha profesyoneldir
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          projectBaseDir: frontend
+
+      # KRİTİK EKLENTİ: Quality Gate. Kod standartların altındaysa pipeline burada patlar, bozuk kod deploy edilmez.
+      - name: SonarQube Quality Gate Check
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN2 }}
+
 
   # 2. AŞAMA: DOCKER BUILD & PUSH
   build-and-push-docker:
