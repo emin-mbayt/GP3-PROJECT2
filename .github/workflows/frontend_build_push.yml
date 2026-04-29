@@ -49,7 +49,7 @@ jobs:
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v2
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN2 }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           projectBaseDir: frontend
