@@ -96,6 +96,7 @@ jobs:
           password: ${{ secrets.VM_OPS_PASSWORD }}
           script: |
             echo "${{ secrets.ANSIBLE_VAULT_PASS }}" > /tmp/vp
-            cd /home/azureuser/config/ansible
+            cd /home/azureuser/GP3-PROJECT2 && git pull
+            cd config/ansible
             ansible-playbook playbooks/site.yml --limit api --vault-password-file /tmp/vp
             rm -f /tmp/vp
