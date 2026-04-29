@@ -17,7 +17,7 @@ env:
 jobs:
   # 1. AŞAMA: KOD KALİTESİ VE GÜVENLİK
   sonarqube-analysis:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     environment: env
     steps:
       - name: Checkout Code
@@ -44,7 +44,7 @@ jobs:
   # 2. AŞAMA: DOCKER BUILD & PUSH
   build-and-push-docker:
     needs: sonarqube-analysis
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     environment: env
     steps:
       # İYİLEŞTİRME: rm -rf yerine Git'in kendi güvenli temizlik aracını kullanıyoruz.
