@@ -1,4 +1,4 @@
-# Burger Builder Application
+# Burger Builder Application .
 
 A full-stack web application for building and ordering custom burgers with a modern React frontend and Spring Boot backend API.
 
@@ -69,13 +69,16 @@ The frontend connects to the backend API through the following configuration:
 **Location**: `frontend/src/services/api.ts`
 
 ```typescript
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 ```
 
 **Required Environment Variable**:
+
 - `VITE_API_BASE_URL`: The base URL for the backend API (defaults to `http://localhost:8080`)
 
 **Usage**:
+
 1. Create a `.env` file in the frontend directory
 2. Add: `VITE_API_BASE_URL=http://your-backend-url:8080`
 3. For production: `VITE_API_BASE_URL=https://your-production-api.com`
@@ -103,6 +106,7 @@ npm run preview      # Preview production build locally
 ```
 
 The build process:
+
 1. **TypeScript Compilation**: `tsc -b` compiles TypeScript to JavaScript
 2. **Vite Build**: Bundles and optimizes assets
 3. **Output**: Creates `dist/` folder with production-ready files
@@ -110,12 +114,14 @@ The build process:
 #### Deployment Options
 
 **Option 1: Static Hosting (Recommended)**
+
 - Build the application: `npm run build`
 - Deploy the `dist/` folder to any static hosting service:
   - Vercel, Netlify, AWS S3, Azure Static Web Apps
   - Set `VITE_API_BASE_URL` environment variable in hosting platform
 
 **Option 2: Docker with Nginx**
+
 - The project includes `nginx.conf` for containerized deployment
 - Nginx serves the built React app with optimizations:
   - Gzip compression
@@ -124,6 +130,7 @@ The build process:
   - SPA routing support
 
 **Option 3: Traditional Web Server**
+
 - Upload built files to any web server (Apache, Nginx, IIS)
 - Configure server to serve `index.html` for all routes (SPA support)
 
@@ -134,7 +141,7 @@ The build process:
 - **Framework**: Spring Boot 3.2.0
 - **Language**: Java 21
 - **Build Tool**: Maven
-- **Database**: 
+- **Database**:
   - PostgreSQL (Docker/Development)
   - Azure SQL Database (Production)
 - **ORM**: Spring Data JPA + Hibernate
@@ -156,6 +163,7 @@ The build process:
 The backend requires the following environment variables (defined in `environment.env`):
 
 #### Database Configuration
+
 - `DB_HOST`: Database server hostname
 - `DB_PORT`: Database port (1433 for SQL Server, 5432 for PostgreSQL)
 - `DB_NAME`: Database name
@@ -164,6 +172,7 @@ The backend requires the following environment variables (defined in `environmen
 - `DB_DRIVER`: JDBC driver class name
 
 #### Application Configuration
+
 - `SPRING_PROFILES_ACTIVE`: Active Spring profile
   - `docker`: Uses PostgreSQL configuration
   - `azure`: Uses Azure SQL configuration
@@ -210,6 +219,7 @@ mvn clean package     # Build JAR file
 ```
 
 The build process:
+
 1. **Dependency Resolution**: Downloads all Maven dependencies
 2. **Compilation**: Compiles Java source code to bytecode
 3. **Testing**: Runs unit and integration tests
@@ -218,11 +228,13 @@ The build process:
 #### Deployment Options
 
 **Option 1: JAR File Execution**
+
 ```bash
 java -jar target/burger-builder-backend-1.0.0.jar
 ```
 
 **Option 2: Docker Deployment**
+
 ```bash
 # Build Docker image
 docker build -t burger-builder-backend .
@@ -232,6 +244,7 @@ docker run -p 8080:8080 --env-file environment.env burger-builder-backend
 ```
 
 **Option 3: Cloud Platform Deployment**
+
 - **Azure App Service**: Deploy JAR file directly
 - **AWS Elastic Beanstalk**: Upload JAR file
 - **Google Cloud Run**: Containerized deployment
@@ -240,11 +253,13 @@ docker run -p 8080:8080 --env-file environment.env burger-builder-backend
 #### Environment-Specific Deployment
 
 **Development (PostgreSQL)**:
+
 1. Set `SPRING_PROFILES_ACTIVE=docker`
 2. Configure PostgreSQL connection variables
 3. Run with Docker Compose or local PostgreSQL
 
 **Production (Azure SQL)**:
+
 1. Set `SPRING_PROFILES_ACTIVE=azure`
 2. Configure Azure SQL connection variables
 3. Deploy to cloud platform with proper security configuration
