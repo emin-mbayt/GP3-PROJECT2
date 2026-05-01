@@ -35,9 +35,6 @@ export default function IngredientCard({ ingredient, onAdd }: IngredientCardProp
 
       <div className="card-name">{ingredient.name}</div>
 
-      {ingredient.description && (
-        <div className="card-desc">{ingredient.description}</div>
-      )}
 
       <div className="card-price">
         ${ingredient.price.toFixed(2)} / serving

@@ -64,7 +64,7 @@ describe('API Service', () => {
 
       mockAxiosInstance.get.mockResolvedValue({ data: mockIngredients });
 
-      const result = await getIngredientsByCategory('patties');
+      const result = await getIngredientsByCategory('patties' as any);
       expect(result).toEqual(mockIngredients);
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/api/ingredients/patties');
     });

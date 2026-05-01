@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import MetricsPanel from './MetricsPanel';
 import type { BurgerLayer, Ingredient } from '../../types';
 
-const makeIngredient = (id: number, category: string, price: number): Ingredient => ({
+const makeIngredient = (id: number, category: Ingredient['category'], price: number): Ingredient => ({
   id, name: `Supplement ${id}`, category, price, imageUrl: null,
 });
 
