@@ -1,8 +1,14 @@
-# Burger Builder — Cloud Infrastructure Project
+# DOSE — Personalized Supplement Protocol Platform
 
-Full-stack burger ordering app deployed on Azure 3-tier infrastructure. React/TypeScript frontend + Spring Boot backend + Azure IaC (Terraform) + Ansible configuration management + GitHub Actions CI/CD.
+Full-stack supplement subscription app deployed on Azure 3-tier infrastructure. React/TypeScript frontend + Spring Boot backend + Azure IaC (Terraform) + Ansible configuration management + GitHub Actions CI/CD.
 
 **Live URL:** `http://burger-proj2-dev-group-3.northeurope.cloudapp.azure.com`
+
+---
+
+## What is DOSE?
+
+DOSE is a premium, personalized supplement subscription platform. Users build a custom protocol stack from 20 science-backed supplements across four goal categories — Energy, Focus, Immunity, Longevity — then subscribe for monthly delivery.
 
 ---
 
@@ -61,7 +67,6 @@ Key outputs after apply:
 ```bash
 terraform output appgw_public_ip      # App Gateway IP
 terraform output appgw_fqdn           # App Gateway DNS
-terraform output vm_ops_public_ip     # vm-ops SSH target
 terraform output sql_server_fqdn      # SQL Server FQDN
 ```
 
@@ -138,7 +143,7 @@ curl -s -o /dev/null -w "%{http_code}" $BASE/
 # API health
 curl $BASE/api/health
 
-# Ingredients
+# Supplements
 curl $BASE/api/ingredients
 
 # Verify SQL is NOT publicly reachable
@@ -176,7 +181,7 @@ snet-ops (10.20.5.0/27) — vm-ops: SonarQube + GitHub Actions runner + Ansible 
 ## Project Structure
 
 ```
-├── frontend/                   # React + TypeScript + Vite
+├── frontend/                   # React + TypeScript + Vite (DOSE UI)
 ├── backend/                    # Spring Boot Java 21
 ├── infra/
 │   └── terraform/

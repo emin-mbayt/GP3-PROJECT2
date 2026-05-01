@@ -1,16 +1,18 @@
-# Demo Script — Burger Builder
+# Demo Script — DOSE Platform
 
 ## 1. Show the Live App (2 min)
 
 Open browser → `http://burger-proj2-dev-group-3.northeurope.cloudapp.azure.com`
 
-- Browse ingredients
-- Build a burger — add patty, cheese, toppings
-- Add to cart
-- Place order
-- Check order history
+- Browse supplements by goal filter (Energy / Focus / Immunity / Longevity)
+- Click a **Starter Protocol** preset (e.g. "The Executive") — watch protocol stack populate instantly
+- Add individual supplements to customize the stack
+- Watch **Metrics Panel** update live — coverage bars, supplement count, monthly cost
+- Click **Subscribe** → goes to cart ("My Stack")
+- Proceed to Checkout → fill in details → confirm order
+- Check **My Shipments** for order history
 
-**Talking point:** "Frontend on vm-web, API on vm-api, data persisted in Azure SQL — all behind App Gateway WAF v2."
+**Talking point:** "This is DOSE — a personalized supplement subscription platform. Frontend on vm-web, API on vm-api, supplement data persisted in Azure SQL — all behind App Gateway WAF v2. The UX is designed to feel like a fundable startup product, not a student project."
 
 ---
 
@@ -24,7 +26,7 @@ Point out:
 - Key Vault → Networking → private endpoint, IP allowlist for runner
 - 3 VMs — no public IPs, all access via Azure Bastion
 
-**Talking point:** "Zero trust network — SQL and KV only reachable inside VNet via private endpoints. No VM has a public IP — all admin access goes through Azure Bastion."
+**Talking point:** "Zero trust network — SQL and Key Vault only reachable inside the VNet via private endpoints. No VM has a public IP — all admin access goes through Azure Bastion."
 
 ---
 
@@ -36,7 +38,7 @@ Trigger a dummy push or show last successful run:
 - Backend pipeline: SonarQube scan → Quality Gate → Docker build+push → Ansible deploy
 - Frontend pipeline: Tests+coverage → SonarQube scan → Docker build+push → Ansible deploy
 
-**Talking point:** "Code goes through quality gate before it can deploy. If SonarQube fails, pipeline stops — no bad code reaches production."
+**Talking point:** "Code goes through a quality gate before it can deploy. SonarQube blocks bad code from reaching production. Docker images are versioned by commit SHA and pushed to DockerHub, then Ansible pulls and restarts containers on the VMs."
 
 ---
 
@@ -69,7 +71,6 @@ Or show the module structure in the repo.
 
 ```bash
 # Connect via Azure Bastion → vm-ops
-# Azure Portal → Virtual Machines → vm-ops-proj2-dev-group-3 → Connect → Bastion
 cd ~/GP3-PROJECT2/config/ansible
 cat inventories/dev/hosts.ini
 cat playbooks/site.yml
@@ -82,20 +83,18 @@ cat playbooks/site.yml
 ## Sample curl Commands
 
 ```bash
+BASE="http://burger-proj2-dev-group-3.northeurope.cloudapp.azure.com"
+
 # Health check
-curl http://burger-proj2-dev-group-3.northeurope.cloudapp.azure.com/api/health
+curl $BASE/api/health
 
-# Get all ingredients
-curl http://burger-proj2-dev-group-3.northeurope.cloudapp.azure.com/api/ingredients
+# Get all supplements
+curl $BASE/api/ingredients
 
-# Get ingredients by category
-curl http://burger-proj2-dev-group-3.northeurope.cloudapp.azure.com/api/ingredients/patty
-
-# Create order
-curl -X POST http://burger-proj2-dev-group-3.northeurope.cloudapp.azure.com/api/orders \
-  -H "Content-Type: application/json" \
-  -d '{"sessionId":"demo-session","email":"demo@test.com"}'
+# Get supplements by category
+curl $BASE/api/ingredients/energy
+curl $BASE/api/ingredients/focus
 
 # Get order history
-curl http://burger-proj2-dev-group-3.northeurope.cloudapp.azure.com/api/orders/history
+curl $BASE/api/orders/history
 ```
