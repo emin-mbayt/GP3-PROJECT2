@@ -61,6 +61,18 @@
   background: rgba(0, 229, 204, 0.08);
 }
 
+.card-add--added {
+  border-color: var(--card-accent, var(--accent-cyan));
+  color: var(--card-accent, var(--accent-cyan));
+  background: rgba(0, 229, 204, 0.15);
+  transform: scale(1.15);
+}
+
+.ingredient-card--added {
+  border-color: var(--card-accent, var(--accent-cyan));
+  background: var(--bg-elevated);
+}
+
 .card-name {
   font-family: var(--font-display);
   font-size: 18px;

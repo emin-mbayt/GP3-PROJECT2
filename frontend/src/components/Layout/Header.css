@@ -94,6 +94,21 @@
   display: inline;
 }
 
+@media (max-width: 640px) {
+  .header-inner {
+    padding: 0 16px;
+    gap: 16px;
+  }
+
+  .header-nav {
+    gap: 16px;
+  }
+
+  .cart-label {
+    display: none;
+  }
+}
+
 .cart-badge {
   position: absolute;
   top: -6px;

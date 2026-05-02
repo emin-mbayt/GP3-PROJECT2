@@ -2,7 +2,7 @@
 
 ## 1. Show the Live App (2 min)
 
-Open browser → `http://burger-proj2-dev-group-3.northeurope.cloudapp.azure.com`
+Open browser → `https://dose.software`
 
 - Browse supplements by goal filter (Energy / Focus / Immunity / Longevity)
 - Click a **Starter Protocol** preset (e.g. "The Executive") — watch protocol stack populate instantly
@@ -83,7 +83,7 @@ cat playbooks/site.yml
 ## Sample curl Commands
 
 ```bash
-BASE="http://burger-proj2-dev-group-3.northeurope.cloudapp.azure.com"
+BASE="https://dose.software"
 
 # Health check
 curl $BASE/api/health

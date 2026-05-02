@@ -2,7 +2,7 @@
 
 Full-stack supplement subscription app deployed on Azure 3-tier infrastructure. React/TypeScript frontend + Spring Boot backend + Azure IaC (Terraform) + Ansible configuration management + GitHub Actions CI/CD.
 
-**Live URL:** `http://burger-proj2-dev-group-3.northeurope.cloudapp.azure.com`
+**Live URL:** `https://dose.software`
 
 ---
 
